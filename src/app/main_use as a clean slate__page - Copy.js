@@ -16,12 +16,9 @@ export default function Home() {
         <p className="text-lg text-gray-600 mb-6">
           We replace traditional agents with a smarter platform. Flat 3% fee — no surprises.
         </p>
-		<a
-			href="/add"
-			className="inline-block bg-black text-white px-6 py-2 rounded hover:bg-gray-800 transition">
-		Get Started
-		</a>
-       
+        <button className="bg-black text-white px-6 py-2 rounded hover:opacity-90">
+          Get Started
+        </button>
       </section>
 
       {/* How It Works */}
