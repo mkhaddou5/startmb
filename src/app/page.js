@@ -47,7 +47,7 @@ export default function Home() {
       <section id="contact" className="py-20 bg-gray-100">
         <h3 className="text-2xl font-bold mb-4">Ready to Get Started?</h3>
         <p className="text-sm text-gray-600 mb-6">
-          Leave your email and we'll contact you shortly.
+          Leave your email and we will contact you shortly.
         </p>
         <form className="flex flex-col items-center gap-4 max-w-sm mx-auto">
           <input
