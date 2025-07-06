@@ -1,6 +1,6 @@
-//import { supabase } from '../../../utils/supabase/client'
+import { supabase } from '../../../utils/supabase/client'
 // src/app/listing/[id]/page.tsx
-import { supabase } from '@/utils/supabase/client'
+//import { supabase } from '@/utils/supabase/client'
 import { notFound } from 'next/navigation'
 
 // ✅ This type must reflect that `params` is async-resolvable in Next.js 15
