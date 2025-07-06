@@ -1,14 +1,8 @@
 import { supabase } from '../../../utils/supabase/client'
-// src/app/listing/[id]/page.tsx
 //import { supabase } from '@/utils/supabase/client'
 import { notFound } from 'next/navigation'
 
-// ✅ This type must reflect that `params` is async-resolvable in Next.js 15
-export default async function ListingDetail({
-  params,
-}: {
-  params: { id: string }
-}) {
+export default async function ListingDetail({ params }: any) {
   const { id } = params
 
   const { data, error } = await supabase
@@ -43,7 +37,6 @@ export default async function ListingDetail({
           {price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
         </p>
 
-        {/* ✅ Image display */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           {images.length > 0 ? (
             images.map((url: string, idx: number) => (
