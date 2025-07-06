@@ -1,10 +1,11 @@
 import { supabase } from '../../../utils/supabase/client'
+// src/app/listing/[id]/page.tsx
+
+//import { supabase } from '@/utils/supabase/client'
 import { notFound } from 'next/navigation'
 
-type PageProps = {
-  params: {
-    id: string
-  }
+interface PageProps {
+  params: { id: string }
 }
 
 export default async function ListingDetail({ params }: PageProps) {
