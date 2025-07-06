@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../../utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -25,8 +25,6 @@ export default function AddListingPage() {
   const [imageFiles, setImageFiles] = useState([null, null, null, null])
   const [error, setError] = useState(null)
 
-  const descriptionRef = useRef<HTMLTextAreaElement | null>(null)
-
   useEffect(() => {
     async function fetchUser() {
       const { data: { user } } = await supabase.auth.getUser()
@@ -37,43 +35,8 @@ export default function AddListingPage() {
         router.push('/auth')
       }
     }
-
-    function preloadAIListingData() {
-      const stored = localStorage.getItem('ai-listing-data')
-      if (!stored) return
-      try {
-        const aiData = JSON.parse(stored)
-        if (aiData.title) setTitle(aiData.title)
-        if (aiData.description) {
-          setDescription(aiData.description)
-          setTimeout(() => autoResizeTextarea(), 0)
-        }
-        if (aiData.address) setAddress(aiData.address)
-        if (aiData.price) {
-          const raw = aiData.price.toString().replace(/[^0-9.]/g, '')
-          setPriceRaw(raw)
-          setPriceFormatted('')
-        }
-        if (aiData.bedrooms) setBedrooms(aiData.bedrooms.toString())
-        if (aiData.bathrooms) setBathrooms(aiData.bathrooms.toString())
-
-        localStorage.removeItem('ai-listing-data')
-      } catch (e) {
-        console.error('Error parsing AI listing data:', e)
-      }
-    }
-
     fetchUser()
-    preloadAIListingData()
   }, [router])
-
-  const autoResizeTextarea = () => {
-    const textarea = descriptionRef.current
-    if (textarea) {
-      textarea.style.height = 'auto'
-      textarea.style.height = `${textarea.scrollHeight}px`
-    }
-  }
 
   const formatWholeNumber = (value: string) => {
     const num = parseInt(value.replace(/\D/g, ''))
@@ -172,6 +135,7 @@ export default function AddListingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50 px-4 py-10">
       <div className="max-w-2xl mx-auto">
+
         <div className="text-right text-sm text-gray-600 mb-2">
           Logged in as <span className="font-semibold text-gray-800">{userName}</span>
         </div>
@@ -183,44 +147,10 @@ export default function AddListingPage() {
         <div className="bg-white p-6 rounded-xl shadow space-y-6">
           <h2 className="text-2xl font-bold text-gray-800">Add New Listing</h2>
 
-<div className="bg-blue-50 border border-blue-200 p-4 rounded-md mb-6">
-  <h3 className="text-lg font-semibold text-blue-800 mb-2">
-    Want help writing your listing?
-  </h3>
-  <p className="text-sm text-blue-700 mb-3">
-    Let the <strong>StartMB AI-Powered Listing Agent</strong> generate your title, description, and estimated price based on your property info.
-  </p>
-  <button
-    onClick={() => router.push('/ai-listing-assistant')}
-    className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md transition"
-  >
-    Launch AI Listing Agent
-  </button>
-</div>
-
-
-
           <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Title"
-              className="w-full px-4 py-2 border rounded"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
+            <input type="text" placeholder="Title" className="w-full px-4 py-2 border rounded" value={title} onChange={(e) => setTitle(e.target.value)} required />
 
-            <textarea
-              ref={descriptionRef}
-              placeholder="Description"
-              className="w-full px-4 py-2 border rounded resize-none overflow-hidden"
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value)
-                autoResizeTextarea()
-              }}
-              required
-            />
+            <textarea placeholder="Description" className="w-full px-4 py-2 border rounded" value={description} onChange={(e) => setDescription(e.target.value)} required />
 
             <div className="relative">
               <input
@@ -235,29 +165,11 @@ export default function AddListingPage() {
               />
             </div>
 
-            <input
-              type="text"
-              placeholder="Address"
-              className="w-full px-4 py-2 border rounded"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
+            <input type="text" placeholder="Address" className="w-full px-4 py-2 border rounded" value={address} onChange={(e) => setAddress(e.target.value)} />
 
             <div className="grid grid-cols-2 gap-4">
-              <input
-                type="number"
-                placeholder="Bedrooms"
-                className="w-full px-4 py-2 border rounded"
-                value={bedrooms}
-                onChange={(e) => setBedrooms(e.target.value)}
-              />
-              <input
-                type="number"
-                placeholder="Bathrooms"
-                className="w-full px-4 py-2 border rounded"
-                value={bathrooms}
-                onChange={(e) => setBathrooms(e.target.value)}
-              />
+              <input type="number" placeholder="Bedrooms" className="w-full px-4 py-2 border rounded" value={bedrooms} onChange={(e) => setBedrooms(e.target.value)} />
+              <input type="number" placeholder="Bathrooms" className="w-full px-4 py-2 border rounded" value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} />
             </div>
 
             <div className="grid grid-cols-2 gap-4">

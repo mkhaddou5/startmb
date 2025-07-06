@@ -1,20 +1,33 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import { supabase } from '../../../utils/supabase/client'
-//import { supabase } from '@/utils/supabase/client'
-import { notFound } from 'next/navigation'
 
-export default async function ListingDetail({ params }: any) {
-  const { id } = params
+export default function ListingDetail() {
+  const params = useParams()
+  const id = params.id as string
+  const [listing, setListing] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  const { data, error } = await supabase
-    .from('listings')
-    .select('*')
-    .eq('id', id)
-    .single()
+  useEffect(() => {
+    if (!id) return
+    const fetchListing = async () => {
+      const { data, error } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('id', id)
+        .single()
 
-  if (error || !data) {
-    console.error('Listing not found:', error?.message)
-    notFound()
-  }
+      if (error) setError(error.message)
+      else setListing(data)
+    }
+
+    fetchListing()
+  }, [id])
+
+  if (error) return <p className="text-red-600 p-4">Error: {error}</p>
+  if (!listing) return <p className="p-4">Loading listing...</p>
 
   const {
     title,
@@ -26,7 +39,7 @@ export default async function ListingDetail({ params }: any) {
     house_sqft,
     lot_sqft,
     images = [],
-  } = data
+  } = listing
 
   return (
     <div className="min-h-screen bg-white px-4 py-10">
