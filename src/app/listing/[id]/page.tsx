@@ -1,23 +1,19 @@
-import { supabase } from '../../../utils/supabase/client';
-import { notFound } from 'next/navigation';
+import { supabase } from '../../../utils/supabase/client'
+import { notFound } from 'next/navigation'
 
-// ✅ Fix: declare props using Awaited to allow both sync & async inference
-export default async function ListingDetail({
-  params,
-}: {
-  params: Awaited<{ id: string }>;
-}) {
-  const { id } = await params;
+// ✅ Correct structure for dynamic route page in Next.js 15+
+export default async function ListingPage({ params }: { params: { id: string } }) {
+  const { id } = params
 
   const { data, error } = await supabase
     .from('listings')
     .select('*')
     .eq('id', id)
-    .single();
+    .single()
 
   if (error || !data) {
-    console.error('Listing not found:', error?.message);
-    notFound();
+    console.error('Listing not found:', error?.message)
+    notFound()
   }
 
   const {
@@ -30,7 +26,7 @@ export default async function ListingDetail({
     house_sqft,
     lot_sqft,
     images = [],
-  } = data;
+  } = data
 
   return (
     <div className="min-h-screen bg-white px-4 py-10">
@@ -41,6 +37,7 @@ export default async function ListingDetail({
           {price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
         </p>
 
+        {/* Images */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           {images.length > 0 ? (
             images.map((url: string, idx: number) => (
@@ -65,5 +62,5 @@ export default async function ListingDetail({
         </div>
       </div>
     </div>
-  );
+  )
 }
