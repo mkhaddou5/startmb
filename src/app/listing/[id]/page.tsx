@@ -1,8 +1,14 @@
 import { supabase } from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
+import { type Metadata } from 'next'
 
+// ✅ Let Next.js infer the correct PageProps type
 interface PageProps {
   params: { id: string }
+}
+
+export const metadata: Metadata = {
+  title: 'Listing Details',
 }
 
 export default async function ListingDetail({ params }: PageProps) {
