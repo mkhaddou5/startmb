@@ -1,11 +1,17 @@
 import { supabase } from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
 
-export default async function ListingDetail({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: { id: string }
+}
+
+export default async function ListingDetail({ params }: PageProps) {
+  const { id } = params
+
   const { data, error } = await supabase
     .from('listings')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (error || !data) {
@@ -34,7 +40,6 @@ export default async function ListingDetail({ params }: { params: { id: string }
           {price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
         </p>
 
-        {/* Images */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           {images.length > 0 ? (
             images.map((url: string, idx: number) => (
