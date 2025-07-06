@@ -122,19 +122,18 @@ export default function AIListingAssistantPage() {
           <p className="text-lg mt-2 font-semibold text-gray-700">StartMB AI-Powered Listing Agent</p>
         </div>
 
-        {/* Form */}
-		
-		<div className="bg-blue-50 border border-blue-200 p-4 rounded-md mb-6 text-sm text-blue-800">
-  <h2 className="text-base font-semibold mb-2">What does the StartMB AI Listing Agent do?</h2>
-  <ul className="list-disc list-inside space-y-1">
-    <li>Fill in your property's details below (location, features, tone, etc.)</li>
-    <li>Click <strong>"Generate Listing"</strong> to let our AI write a professional title and description for your property</li>
-    <li>We'll also estimate a price and address based on your input</li>
-    <li>Once you're happy with the result, hit <strong>"Next"</strong> to auto-fill it into the main listing form</li>
-  </ul>
-</div>
+        {/* How it works */}
+        <div className="bg-blue-50 border border-blue-200 p-4 rounded-md mb-6 text-sm text-blue-800">
+          <h2 className="text-base font-semibold mb-2">What does the StartMB AI Listing Agent do?</h2>
+          <ul className="list-disc list-inside space-y-1">
+            <li>Fill in your property&apos;s details below (location, features, tone, etc.)</li>
+            <li>Click <strong>&quot;Generate Listing&quot;</strong> to let our AI write a professional title and description for your property</li>
+            <li>We&apos;ll also estimate a price and address based on your input</li>
+            <li>Once you&apos;re happy with the result, hit <strong>&quot;Next&quot;</strong> to auto-fill it into the main listing form</li>
+          </ul>
+        </div>
 
-		
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4 bg-white shadow-md p-6 rounded-lg">
           <input
             type="text"
@@ -242,13 +241,13 @@ export default function AIListingAssistantPage() {
 
             <div className="mt-6 text-center">
               <p className="text-green-700 font-medium mb-2">
-                ✅ Listing data saved. You’re ready to move to the next step.
+                ✅ Listing data saved. You&apos;re ready to move to the next step.
               </p>
               <button
                 onClick={() => router.push('/add')}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md text-lg transition"
               >
-                Next: Auto-Fill & Review Listing
+                Next: Auto-Fill &amp; Review Listing
               </button>
             </div>
           </div>
