@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '../../utils/supabase/client' // adjust path if needed
+import { supabase } from '../../utils/supabase/client'
+import type { JSX } from 'react'  // ✅ Fix for JSX namespace error on Vercel
 
 export default function Page(): JSX.Element {
   const [email, setEmail] = useState('')
