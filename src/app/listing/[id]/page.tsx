@@ -1,7 +1,14 @@
 import { supabase } from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
 
-export default async function ListingDetail({ params }: { params: { id: string } }) {
+// ✅ Define the correct type for `params` prop
+interface PageProps {
+  params: {
+    id: string
+  }
+}
+
+export default async function ListingDetail({ params }: PageProps) {
   const { data, error } = await supabase
     .from('listings')
     .select('*')
