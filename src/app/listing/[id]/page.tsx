@@ -1,8 +1,13 @@
 import { supabase } from '../../../utils/supabase/client'
 import { notFound } from 'next/navigation'
 
-// ✅ This is the correct way to destructure `params` in App Router
-export default async function ListingDetail({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: {
+    id: string
+  }
+}
+
+export default async function ListingDetail({ params }: PageProps) {
   const { data, error } = await supabase
     .from('listings')
     .select('*')
@@ -35,6 +40,7 @@ export default async function ListingDetail({ params }: { params: { id: string }
           {price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
         </p>
 
+        {/* Images */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           {images.length > 0 ? (
             images.map((url: string, idx: number) => (
