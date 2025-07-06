@@ -1,8 +1,14 @@
-import { supabase } from '../../../utils/supabase/client'
+//import { supabase } from '../../../utils/supabase/client'
+// src/app/listing/[id]/page.tsx
+import { supabase } from '@/utils/supabase/client'
 import { notFound } from 'next/navigation'
 
-// ✅ Correct structure for dynamic route page in Next.js 15+
-export default async function ListingPage({ params }: { params: { id: string } }) {
+// ✅ This type must reflect that `params` is async-resolvable in Next.js 15
+export default async function ListingDetail({
+  params,
+}: {
+  params: { id: string }
+}) {
   const { id } = params
 
   const { data, error } = await supabase
@@ -37,7 +43,7 @@ export default async function ListingPage({ params }: { params: { id: string } }
           {price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
         </p>
 
-        {/* Images */}
+        {/* ✅ Image display */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           {images.length > 0 ? (
             images.map((url: string, idx: number) => (
