@@ -7,7 +7,7 @@ export default async function ListingDetail({
 }: {
   params: Awaited<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = await params;
 
   const { data, error } = await supabase
     .from('listings')
