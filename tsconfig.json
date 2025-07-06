@@ -18,6 +18,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "types": ["react", "react-dom"],  // ✅ Add this
     "plugins": [
       {
         "name": "next"
