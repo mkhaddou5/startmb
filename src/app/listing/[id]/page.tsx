@@ -1,14 +1,7 @@
 import { supabase } from '../../../utils/supabase/client'
-// src/app/listing/[id]/page.tsx
-
-//import { supabase } from '@/utils/supabase/client'
 import { notFound } from 'next/navigation'
 
-interface PageProps {
-  params: { id: string }
-}
-
-export default async function ListingDetail({ params }: PageProps) {
+export default async function ListingDetail({ params }: { params: { id: string } }) {
   const { data, error } = await supabase
     .from('listings')
     .select('*')
