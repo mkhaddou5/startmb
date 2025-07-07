@@ -100,6 +100,11 @@ export default function AddListingPage() {
     e.preventDefault()
     setError(null)
 
+    if (!userId) {
+      setError("User not authenticated.")
+      return
+    }
+
     const price = parseFloat(priceRaw.replace(/[^0-9.]/g, ''))
     const houseSqft = parseInt(houseSqftRaw)
     const lotSqft = parseInt(lotSqftRaw)
