@@ -244,7 +244,7 @@ export default function AIListingAssistantPage() {
                 ✅ Listing data saved. You&apos;re ready to move to the next step.
               </p>
               <button
-                onClick={() => router.push('/add')}
+                onClick={() => router.push('/add-listing')}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md text-lg transition"
               >
                 Next: Auto-Fill &amp; Review Listing
