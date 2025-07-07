@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '../../utils/supabase/client'
+import { supabase } from '@/utils/supabase/client'
 
 export default function EditListingPage() {
   const { id } = useParams();
