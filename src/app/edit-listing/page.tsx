@@ -69,9 +69,10 @@ export default function EditListingPage() {
     setExistingImages((prev) => prev.filter((img) => img !== url))
   }
 
+  // ✅ Fixed type error with "as File[]" and typed updater function
   const handleNewImageUpload = (e: any) => {
-    const files = Array.from(e.target.files)
-    setNewImageFiles((prev) => [...prev, ...files])
+    const files = Array.from(e.target.files) as File[]
+    setNewImageFiles((prev: File[]) => [...prev, ...files])
   }
 
   const handleSubmit = async (e: any) => {
