@@ -1,19 +1,15 @@
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import "tailwindcss";
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,8 +19,40 @@
   }
 }
 
+/* ✅ Use Tailwind font setup */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply font-sans text-gray-800 bg-white;
+}
+
+h1, h2, h3, h4 {
+  @apply font-heading;
+}
+
+/* ✅ Universal Form Styling */
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db; /* Tailwind gray-300 */
+  background-color: white;
+  color: #1f2937; /* Tailwind gray-800 */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af; /* Tailwind gray-400 */
+  opacity: 1;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #2563eb; /* Tailwind blue-600 */
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3); /* blue-600 ring */
 }

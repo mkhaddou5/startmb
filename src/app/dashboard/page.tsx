@@ -8,46 +8,62 @@ import Link from 'next/link'
 export default function DashboardPage() {
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null)
   const [userName, setUserName] = useState('')
   const router = useRouter()
 
   useEffect(() => {
     const fetchData = async () => {
       const { data: userData } = await supabase.auth.getUser()
-      const user = userData?.user
+      const currentUser = userData?.user
 
-      if (!user) {
+      if (!currentUser) {
         router.push('/auth')
         return
       }
 
-      const fullName = user.user_metadata?.full_name || user.email || 'Welcome!'
+      setUser(currentUser)
+      const fullName = currentUser.user_metadata?.full_name || currentUser.email || 'Welcome!'
       setUserName(fullName)
 
       const { data, error } = await supabase
         .from('listings')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false })
 
       if (!error) {
-        setListings(data)
+        setListings(data || [])
+      } else {
+        console.error('Error loading listings:', error)
       }
+
       setLoading(false)
     }
 
     fetchData()
   }, [router])
 
+  const handleDelete = async (id) => {
+    if (!confirm('Are you sure you want to delete this listing?')) return
+
+    const { error } = await supabase.from('listings').delete().eq('id', id)
+
+    if (error) {
+      console.error('Failed to delete:', error)
+      return
+    }
+
+    setListings((prev) => prev.filter((listing) => listing.id !== id))
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50 px-4 py-10">
       <div className="max-w-5xl mx-auto">
-
-        {/* ✅ Logged in User Name */}
         <div className="text-right text-sm text-gray-600 mb-2">
           Logged in as <span className="font-semibold text-gray-800">{userName}</span>
         </div>
 
-        {/* ✅ Clickable StartMB Logo */}
         <Link href="/" className="block text-3xl font-extrabold text-center mb-10 text-blue-600 tracking-tight">
           <span className="bg-gradient-to-r from-blue-600 to-teal-400 bg-clip-text text-transparent">Start</span>MB
         </Link>
@@ -55,7 +71,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Your Dashboard</h1>
           <button
-            onClick={() => router.push('/add')}
+            onClick={() => router.push('/add-listing')}
             className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition"
           >
             + Add New Listing
@@ -76,7 +92,6 @@ export default function DashboardPage() {
                   key={item.id}
                   className="bg-white p-6 rounded-xl shadow hover:shadow-md transition space-y-3"
                 >
-                  {/* ✅ 2x2 Image Grid */}
                   <div className="grid grid-cols-2 gap-2 mb-2">
                     {[0, 1, 2, 3].map((i) => (
                       <div
@@ -92,42 +107,29 @@ export default function DashboardPage() {
                     ))}
                   </div>
 
-                  <p className="text-sm text-gray-500">
-                    <span className="font-medium text-gray-700">Title:</span> {item.title || '—'}
-                  </p>
+                  <p className="text-sm text-gray-500"><span className="font-medium text-gray-700">Title:</span> {item.title || '—'}</p>
+                  <p className="text-sm text-gray-500"><span className="font-medium text-gray-700">Price:</span> {item.price ? `$${item.price}` : '—'}</p>
+                  <p className="text-sm text-gray-500"><span className="font-medium text-gray-700">Description:</span> {item.description?.length > 100 ? `${item.description.substring(0, 100)}...` : item.description || '—'}</p>
+                  <p className="text-sm text-gray-500"><span className="font-medium text-gray-700">Address:</span> {item.address || '—'}</p>
+                  <p className="text-sm text-gray-500"><span className="font-medium text-gray-700">Bedrooms:</span> {item.bedrooms || '—'}</p>
+                  <p className="text-sm text-gray-500"><span className="font-medium text-gray-700">Bathrooms:</span> {item.bathrooms || '—'}</p>
+                  <p className="text-sm text-gray-500"><span className="font-medium text-gray-700">House Sq Ft:</span> {item.house_sqft || '—'}</p>
+                  <p className="text-sm text-gray-500"><span className="font-medium text-gray-700">Lot Sq Ft:</span> {item.lot_sqft || '—'}</p>
 
-                  <p className="text-sm text-gray-500">
-                    <span className="font-medium text-gray-700">Price:</span> {item.price ? `$${item.price}` : '—'}
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    <span className="font-medium text-gray-700">Description:</span>{' '}
-                    {item.description
-                      ? item.description.length > 100
-                        ? item.description.substring(0, 100) + '...'
-                        : item.description
-                      : '—'}
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    <span className="font-medium text-gray-700">Address:</span> {item.address || '—'}
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    <span className="font-medium text-gray-700">Bedrooms:</span> {item.bedrooms || '—'}
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    <span className="font-medium text-gray-700">Bathrooms:</span> {item.bathrooms || '—'}
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    <span className="font-medium text-gray-700">House Sq Ft:</span> {item.house_sqft || '—'}
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    <span className="font-medium text-gray-700">Lot Sq Ft:</span> {item.lot_sqft || '—'}
-                  </p>
+                  <div className="flex gap-4 mt-2">
+                    <button
+                      className="bg-blue-600 text-white px-4 py-1 rounded text-sm"
+                      onClick={() => router.push(`/edit-listing?id=${item.id}`)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="bg-red-600 text-white px-4 py-1 rounded text-sm"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               )
             })}

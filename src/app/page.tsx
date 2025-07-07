@@ -15,6 +15,10 @@ export default function Home() {
       <HomeSearch /> {/* Inserted below HowItWorks */}
       <ListingGrid />
       <LeadCaptureForm />
+	  
+		  {/* ✅ Spacer before footer */}
+			<div className="h-20 md:h-32" />
+			
       <Footer />
     </main>
   );
