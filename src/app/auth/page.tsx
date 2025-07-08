@@ -11,11 +11,13 @@ export default function Page(): JSX.Element {
   const [password, setPassword] = useState('')
   const [isLogin, setIsLogin] = useState(true)
   const [error, setError] = useState('')
+  const [infoMessage, setInfoMessage] = useState('')
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setInfoMessage('')
 
     let response
     if (isLogin) {
@@ -23,6 +25,13 @@ export default function Page(): JSX.Element {
         email,
         password,
       })
+
+      const { error } = response
+      if (error) {
+        setError(error.message)
+      } else {
+        router.push('/dashboard')
+      }
     } else {
       response = await supabase.auth.signUp({
         email,
@@ -31,13 +40,15 @@ export default function Page(): JSX.Element {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
-    }
 
-    const { error } = response
-    if (error) {
-      setError(error.message)
-    } else {
-      router.push('/dashboard')
+      const { error } = response
+      if (error) {
+        setError(error.message)
+      } else {
+        setInfoMessage(
+          '✅ Please check your email for a confirmation link. Be sure to check your spam folder.'
+        )
+      }
     }
   }
 
@@ -76,10 +87,12 @@ export default function Page(): JSX.Element {
           />
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
+          {infoMessage && <p className="text-green-600 text-sm">{infoMessage}</p>}
 
           <button
             type="submit"
-            className="w-full py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition"
+            className="w-full py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+            disabled={!!infoMessage}
           >
             {isLogin ? 'Login' : 'Sign Up'}
           </button>
@@ -88,7 +101,11 @@ export default function Page(): JSX.Element {
         <p className="text-center text-sm mt-4 text-gray-600">
           {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
           <button
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={() => {
+              setIsLogin(!isLogin)
+              setError('')
+              setInfoMessage('')
+            }}
             className="text-blue-600 hover:underline font-medium"
           >
             {isLogin ? 'Sign Up' : 'Login'}
