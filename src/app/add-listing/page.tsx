@@ -162,7 +162,7 @@ export default function AddListingPage() {
     e.preventDefault()
     if (!chatInput.trim()) return
 
-    const newMessages = [...messages, { role: 'user', content: chatInput }]
+    const newMessages = [...messages, { role: 'user' as 'user', content: chatInput }]
     setMessages(newMessages)
     setChatInput('')
 
