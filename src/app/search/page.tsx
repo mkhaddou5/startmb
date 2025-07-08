@@ -87,7 +87,7 @@ export default function SearchPage() {
               href={`/property?id=${home.property_id}`}
               className="border rounded-xl shadow hover:shadow-lg transition overflow-hidden block bg-white"
             >
-              <img
+              <image
                 src={home?.photos?.[0]?.href || '/no-image.jpg'}
                 alt="property"
                 className="w-full h-48 object-cover mb-3"

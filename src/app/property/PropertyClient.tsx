@@ -48,7 +48,7 @@ export default function PropertyClient() {
         {home?.location?.address?.city || ''},{' '}
         {home?.location?.address?.state_code || ''}
       </p>
-      <img
+      <image
         src={home?.primary_photo || home?.photos?.[0]?.href || '/no-image.jpg'}
         alt="home"
         className="w-full max-h-[400px] object-cover rounded mb-6"

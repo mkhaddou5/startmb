@@ -42,7 +42,7 @@ export default function ListingGrid() {
                   {Array.isArray(listing.images) &&
                   listing.images.length > 0 &&
                   typeof listing.images[0] === 'string' ? (
-                    <img
+                    <image
                       src={listing.images[0]}
                       alt={listing.title || 'Listing Image'}
                       className="w-full h-full object-cover rounded-t-xl"

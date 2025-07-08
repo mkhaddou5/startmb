@@ -57,7 +57,7 @@ export default function HomeSearch() {
                   rel="noopener noreferrer"
                   className="border p-2 rounded shadow hover:shadow-md transition bg-white"
                 >
-                  <img
+                  <image
                     src={home?.photos?.[0]?.href || '/no-image.jpg'}
                     alt="home"
                     className="w-full h-48 object-cover rounded mb-2"

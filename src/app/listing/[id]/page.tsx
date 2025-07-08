@@ -44,7 +44,7 @@ export default function PublicListingPage() {
 
       <div className="grid grid-cols-2 gap-4">
         {(listing.images || []).map((img: string, i: number) => (
-          <img key={i} src={img} alt={`image-${i}`} className="rounded-lg object-cover h-48 w-full" />
+          <image key={i} src={img} alt={`image-${i}`} className="rounded-lg object-cover h-48 w-full" />
         ))}
       </div>
 

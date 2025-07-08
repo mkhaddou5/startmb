@@ -174,7 +174,7 @@ export default function EditListingInner() {
               <div className="grid grid-cols-2 gap-4 mb-4">
                 {existingImages.map((url, i) => (
                   <div key={i} className="relative">
-                    <img src={url} alt={`img-${i}`} className="w-full h-32 object-cover rounded" />
+                    <image src={url} alt={`img-${i}`} className="w-full h-32 object-cover rounded" />
                     <button type="button" onClick={() => handleImageDelete(url)} className="absolute top-1 right-1 text-xs px-2 py-1 bg-red-600 text-white rounded">Remove</button>
                   </div>
                 ))}
@@ -186,7 +186,7 @@ export default function EditListingInner() {
                   <div key={i} className="relative">
                     <label htmlFor={`image-${i}`} className="block aspect-square border-2 border-dashed border-gray-300 rounded-md cursor-pointer overflow-hidden flex items-center justify-center bg-gray-50 hover:border-blue-400">
                       {newImages[i] ? (
-                        <img src={URL.createObjectURL(newImages[i]!)} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
+                        <image src={URL.createObjectURL(newImages[i]!)} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-sm text-gray-500 text-center px-2">Upload Image {i + 1}</span>
                       )}
