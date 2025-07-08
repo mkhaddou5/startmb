@@ -23,6 +23,10 @@ export default function AddListingPage() {
   const [imageFiles, setImageFiles] = useState<(File | null)[]>([null, null, null, null])
   const [error, setError] = useState<string | null>(null)
 
+  const [showChat, setShowChat] = useState(false)
+  const [chatInput, setChatInput] = useState('')
+  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([])
+
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null)
 
   useEffect(() => {
@@ -72,29 +76,27 @@ export default function AddListingPage() {
     }
   }
 
-  const formatWholeNumber = (value: string) => {
-    const num = parseInt(value.replace(/\D/g, ''))
-    return isNaN(num) ? '' : num.toLocaleString()
-  }
-
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9.]/g, '')
-    setPriceRaw(value)
-    setPriceFormatted('')
+  const handlePriceFocus = () => {
+    setIsPriceFocused(true)
   }
 
   const handlePriceBlur = () => {
-    if (priceRaw) {
-      const formatted = parseFloat(priceRaw).toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      })
-      setPriceFormatted(formatted)
-    }
     setIsPriceFocused(false)
+    const price = parseFloat(priceRaw.replace(/[^0-9.]/g, ''))
+    if (!isNaN(price)) {
+      const formatted = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(price)
+      setPriceFormatted(formatted)
+    } else {
+      setPriceFormatted('')
+    }
   }
 
-  const handlePriceFocus = () => setIsPriceFocused(true)
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPriceRaw(e.target.value)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -135,26 +137,46 @@ export default function AddListingPage() {
       }
     }
 
-    const { error: insertError } = await supabase.from('listings').insert([
-      {
-        title,
-        description,
-        price,
-        address,
-        bedrooms: parseInt(bedrooms),
-        bathrooms: parseInt(bathrooms),
-        house_sqft: houseSqft,
-        lot_sqft: lotSqft,
-        user_id: userId,
-        images: uploadedImageUrls,
-      },
-    ])
+    const { error: insertError } = await supabase.from('listings').insert([{
+      title,
+      description,
+      price,
+      address,
+      bedrooms: parseInt(bedrooms),
+      bathrooms: parseInt(bathrooms),
+      house_sqft: houseSqft,
+      lot_sqft: lotSqft,
+      user_id: userId,
+      images: uploadedImageUrls,
+    }])
 
     if (insertError) {
       console.error('Insert error:', insertError.message)
       setError('Failed to add listing: ' + insertError.message)
     } else {
       router.push('/dashboard')
+    }
+  }
+
+  const handleChatSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!chatInput.trim()) return
+
+    const newMessages = [...messages, { role: 'user', content: chatInput }]
+    setMessages(newMessages)
+    setChatInput('')
+
+    const res = await fetch('/api/chat-bot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: newMessages }),
+    })
+
+    const data = await res.json()
+    if (data?.reply) {
+      setMessages([...newMessages, { role: 'assistant', content: data.reply }])
+    } else {
+      setMessages([...newMessages, { role: 'assistant', content: 'Sorry, I couldn’t generate a response.' }])
     }
   }
 
@@ -173,9 +195,7 @@ export default function AddListingPage() {
           <h2 className="text-2xl font-bold text-gray-800">Add New Listing</h2>
 
           <div className="bg-blue-50 border border-blue-200 p-4 rounded-md mb-6">
-            <h3 className="text-lg font-semibold text-blue-800 mb-2">
-              Want help writing your listing?
-            </h3>
+            <h3 className="text-lg font-semibold text-blue-800 mb-2">Want help writing your listing?</h3>
             <p className="text-sm text-blue-700 mb-3">
               Let the <strong>StartMB AI-Powered Listing Agent</strong> generate your title, description, and estimated price.
             </p>
@@ -188,45 +208,104 @@ export default function AddListingPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <input type="text" placeholder="Title" className="w-full px-4 py-2 border rounded" value={title} onChange={(e) => setTitle(e.target.value)} required />
-            <textarea ref={descriptionRef} placeholder="Description" className="w-full px-4 py-2 border rounded resize-none overflow-hidden" value={description} onChange={(e) => { setDescription(e.target.value); autoResizeTextarea() }} required />
-            <div className="relative">
-              <input type="text" placeholder="Price" className="w-full px-4 py-2 border rounded" value={isPriceFocused ? priceRaw : priceFormatted || (priceRaw ? `$${priceRaw}` : '')} onChange={handlePriceChange} onFocus={handlePriceFocus} onBlur={handlePriceBlur} inputMode="decimal" />
+            <input type="text" placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} className="w-full border p-2 rounded" />
+            <textarea placeholder="Description" value={description} ref={descriptionRef} onChange={e => setDescription(e.target.value)} className="w-full border p-2 rounded resize-none" />
+            <input type="text" placeholder="Price" value={isPriceFocused ? priceRaw : priceFormatted} onFocus={handlePriceFocus} onBlur={handlePriceBlur} onChange={handlePriceChange} className="w-full border p-2 rounded" />
+            <input type="text" placeholder="Address" value={address} onChange={e => setAddress(e.target.value)} className="w-full border p-2 rounded" />
+
+            <div className="flex gap-2">
+              <input type="number" placeholder="Bedrooms" value={bedrooms} onChange={e => setBedrooms(e.target.value)} className="flex-1 border p-2 rounded" />
+              <input type="number" placeholder="Bathrooms" value={bathrooms} onChange={e => setBathrooms(e.target.value)} className="flex-1 border p-2 rounded" />
             </div>
-            <input type="text" placeholder="Address" className="w-full px-4 py-2 border rounded" value={address} onChange={(e) => setAddress(e.target.value)} />
+
+            <div className="flex gap-2">
+              <input type="text" placeholder="House Sq Ft" value={houseSqftRaw} onChange={e => setHouseSqftRaw(e.target.value)} className="flex-1 border p-2 rounded" />
+              <input type="text" placeholder="Lot Sq Ft" value={lotSqftRaw} onChange={e => setLotSqftRaw(e.target.value)} className="flex-1 border p-2 rounded" />
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
-              <input type="number" placeholder="Bedrooms" className="w-full px-4 py-2 border rounded" value={bedrooms} onChange={(e) => setBedrooms(e.target.value)} />
-              <input type="number" placeholder="Bathrooms" className="w-full px-4 py-2 border rounded" value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="House Sq Ft" className="w-full px-4 py-2 border rounded" value={formatWholeNumber(houseSqftRaw)} onChange={(e) => setHouseSqftRaw(e.target.value.replace(/\D/g, ''))} inputMode="numeric" />
-              <input type="text" placeholder="Lot Sq Ft" className="w-full px-4 py-2 border rounded" value={formatWholeNumber(lotSqftRaw)} onChange={(e) => setLotSqftRaw(e.target.value.replace(/\D/g, ''))} inputMode="numeric" />
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">Upload Images</label>
-              <div className="grid grid-cols-2 gap-4">
-                {[0, 1, 2, 3].map((index) => (
-                  <div key={index} className="relative">
-                    <label htmlFor={`image-${index}`} className="block aspect-square border-2 border-dashed border-gray-300 rounded-md cursor-pointer overflow-hidden flex items-center justify-center bg-gray-50 hover:border-blue-400">
-                      {imageFiles[index] ? (
-                        <img src={URL.createObjectURL(imageFiles[index]!)} alt={`Preview ${index + 1}`} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-sm text-gray-500 text-center px-2">Upload Image {index + 1}</span>
-                      )}
-                    </label>
-                    <input type="file" id={`image-${index}`} accept="image/*" className="hidden" onChange={(e) => {
-                      const fileList = [...imageFiles]
-                      fileList[index] = e.target.files?.[0] || null
-                      setImageFiles(fileList)
+              {[0, 1, 2, 3].map(i => (
+                <div key={i} className="border-dashed border-2 border-gray-300 rounded h-32 flex items-center justify-center text-sm text-gray-500">
+                  <label className="cursor-pointer">
+                    Upload image {i + 1}
+                    <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                      const files = [...imageFiles]
+                      files[i] = e.target.files?.[0] || null
+                      setImageFiles(files)
                     }} />
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-gray-500 mt-1">Each box accepts one image (up to 4).</p>
+                  </label>
+                </div>
+              ))}
             </div>
+
+            {/* Document upload placeholder */}
+            <div className="border border-yellow-300 bg-yellow-50 rounded-md p-4 mt-6">
+              <h3 className="text-lg font-semibold text-yellow-800 mb-2">📁 Upload Disclosures & Reports <span className="text-sm text-yellow-600">(Coming Soon)</span></h3>
+              <p className="text-sm text-yellow-700 mb-4">Soon you'll be able to upload important real estate documents such as:</p>
+              <ul className="list-disc list-inside text-sm text-yellow-700 space-y-1">
+                <li>Property Disclosures</li>
+                <li>Natural Hazard Reports</li>
+                <li>Title or Deed Proof</li>
+                <li>Lead Paint Disclosure</li>
+                <li>HOA Rules & Docs</li>
+                <li>Inspection Reports</li>
+                <li>Purchase Contracts</li>
+              </ul>
+              <p className="mt-4 text-sm text-yellow-600 italic">This section is under development. Soon, AI will assist in reviewing them too.</p>
+            </div>
+
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <button type="submit" className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition">Add Listing</button>
           </form>
+        </div>
+      </div>
+
+      {/* =============================== */}
+      {/* FLOATING AI CHATBOT - StartMB  */}
+      {/* =============================== */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <div className={`bg-white shadow-xl border rounded-xl max-w-sm w-96 transition-all ${showChat ? 'h-[500px]' : 'h-12'} overflow-hidden`}>
+          <button
+            className="w-full px-4 py-3 bg-black text-white font-semibold text-sm rounded-t-xl"
+            onClick={() => setShowChat(!showChat)}
+          >
+            {showChat ? (
+              <>Close <span className="text-blue-400 font-bold">StartMB</span> AI Agent</>
+            ) : (
+              <>Ask <span className="text-blue-400 font-bold">StartMB</span> AI Agent</>
+            )}
+          </button>
+          {showChat && (
+            <div className="flex flex-col h-[calc(100%-48px)] p-3">
+              <div className="flex-1 overflow-y-auto text-sm mb-2 space-y-2">
+                {messages.map((msg, i) => (
+                  <div
+                    key={i}
+                    className={`p-2 rounded ${
+                      msg.role === 'user' ? 'bg-gray-200 text-right' : 'bg-blue-100 text-left'
+                    }`}
+                  >
+                    {msg.content}
+                  </div>
+                ))}
+              </div>
+              <form onSubmit={handleChatSubmit} className="flex gap-2 mt-auto">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="Ask about disclosures..."
+                  className="flex-1 border rounded px-2 py-1 text-sm"
+                />
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
+                >
+                  Send
+                </button>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     </div>
