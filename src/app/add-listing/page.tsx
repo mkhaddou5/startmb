@@ -240,7 +240,8 @@ export default function AddListingPage() {
             {/* Document upload placeholder */}
             <div className="border border-yellow-300 bg-yellow-50 rounded-md p-4 mt-6">
               <h3 className="text-lg font-semibold text-yellow-800 mb-2">📁 Upload Disclosures & Reports <span className="text-sm text-yellow-600">(Coming Soon)</span></h3>
-              <p className="text-sm text-yellow-700 mb-4">{Soon you'll be able to upload important real estate documents such as:}</p>
+              <p className="text-sm text-yellow-700 mb-4">Soon you&apos;ll be able to upload important real estate documents such as:</p>
+
               <ul className="list-disc list-inside text-sm text-yellow-700 space-y-1">
                 <li>Property Disclosures</li>
                 <li>Natural Hazard Reports</li>
