@@ -1,31 +1,30 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { supabase } from 'utils/supabase/client'
-import Link from 'next/link'
-import Image from 'next/image'
+import { useEffect, useState } from 'react';
+import { supabase } from 'utils/supabase/client';
+import Link from 'next/link';
 
 export default function ListingGrid() {
-  const [listings, setListings] = useState([])
+  const [listings, setListings] = useState([]);
 
   useEffect(() => {
     const fetchListings = async () => {
       const { data, error } = await supabase
         .from('listings')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching listings:', error)
+        console.error('Error fetching listings:', error);
       } else {
-        setListings(data || [])
+        setListings(data || []);
       }
-    }
+    };
 
-    fetchListings()
-  }, [])
+    fetchListings();
+  }, []);
 
-  if (listings.length === 0) return null
+  if (listings.length === 0) return null;
 
   return (
     <section className="mt-20 px-4 py-10 bg-light border-t border-gray-200">
@@ -39,16 +38,14 @@ export default function ListingGrid() {
                 key={listing.id}
                 className="flex-shrink-0 w-72 bg-white rounded-xl shadow border border-gray-200"
               >
-                <div className="h-48 bg-gray-100 rounded-t-xl relative">
+                <div className="h-48 bg-gray-100 rounded-t-xl">
                   {Array.isArray(listing.images) &&
                   listing.images.length > 0 &&
                   typeof listing.images[0] === 'string' ? (
-                    <Image
-                      src={listing.images[0] || '/no-image.jpg'}
+                    <img
+                      src={listing.images[0]}
                       alt={listing.title || 'Listing Image'}
-                      fill
-                      className="object-cover rounded-t-xl"
-                      sizes="(max-width: 768px) 100vw, 300px"
+                      className="w-full h-full object-cover rounded-t-xl"
                     />
                   ) : (
                     <div className="h-full flex items-center justify-center text-gray-400 text-sm">
@@ -81,5 +78,5 @@ export default function ListingGrid() {
         </div>
       </div>
     </section>
-  )
+  );
 }

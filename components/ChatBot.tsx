@@ -2,24 +2,17 @@
 
 import { useState } from 'react'
 
-type Message = {
-  role: 'user' | 'assistant'
-  content: string
-}
-
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
 
   const sendMessage = async () => {
     if (!input.trim()) return
 
-    const userMessage: Message = { role: 'user', content: input }
-    const updatedMessages: Message[] = [...messages, userMessage]
-
-    setMessages(updatedMessages)
+    const userMessage = { role: 'user', content: input }
+    setMessages([...messages, userMessage])
     setInput('')
     setLoading(true)
 
@@ -27,22 +20,12 @@ export default function ChatBot() {
       const res = await fetch('/api/chat-bot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: updatedMessages }),
+        body: JSON.stringify({ messages: [...messages, userMessage] }),
       })
-
       const data = await res.json()
-
-      const assistantMessage: Message = {
-        role: 'assistant',
-        content: typeof data.reply === 'string' ? data.reply : '🤖 No response received.',
-      }
-
-      setMessages((prev) => [...prev, assistantMessage])
+      setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }])
     } catch (err) {
-      setMessages((prev) => [
-        ...prev,
-        { role: 'assistant', content: '❌ Error getting response.' },
-      ])
+      setMessages((prev) => [...prev, { role: 'assistant', content: '❌ Error getting response.' }])
     }
 
     setLoading(false)
@@ -64,14 +47,7 @@ export default function ChatBot() {
           </div>
           <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2 text-sm">
             {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`p-2 rounded ${
-                  msg.role === 'user'
-                    ? 'bg-blue-100 text-right'
-                    : 'bg-gray-100 text-left'
-                }`}
-              >
+              <div key={i} className={`p-2 rounded ${msg.role === 'user' ? 'bg-blue-100 text-right' : 'bg-gray-100 text-left'}`}>
                 {msg.content}
               </div>
             ))}
@@ -86,12 +62,7 @@ export default function ChatBot() {
               placeholder="Ask about documents..."
               className="flex-1 border px-2 py-1 rounded text-sm"
             />
-            <button
-              onClick={sendMessage}
-              className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
-            >
-              Send
-            </button>
+            <button onClick={sendMessage} className="bg-blue-600 text-white px-3 py-1 rounded text-sm">Send</button>
           </div>
         </div>
       )}

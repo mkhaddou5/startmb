@@ -1,18 +1,17 @@
-'use client'
-import { useState } from 'react'
-import Image from 'next/image'
+'use client';
+import { useState } from 'react';
 
 export default function HomeSearch() {
-  const [city, setCity] = useState('')
-  const [state, setState] = useState('')
-  const [homes, setHomes] = useState([])
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [homes, setHomes] = useState([]);
 
   const handleSearch = async () => {
-    const res = await fetch(`/api/realtor-search?city=${city}&state=${state}`)
-    const data = await res.json()
-    console.log('✅ Home API:', data)
-    setHomes(data || [])
-  }
+    const res = await fetch(`/api/realtor-search?city=${city}&state=${state}`);
+    const data = await res.json();
+    console.log('✅ Home API:', data);
+    setHomes(data || []);
+  };
 
   return (
     <div className="mt-12 mb-24 px-4">
@@ -58,11 +57,9 @@ export default function HomeSearch() {
                   rel="noopener noreferrer"
                   className="border p-2 rounded shadow hover:shadow-md transition bg-white"
                 >
-                  <Image
+                  <img
                     src={home?.photos?.[0]?.href || '/no-image.jpg'}
                     alt="home"
-                    width={400}
-                    height={300}
                     className="w-full h-48 object-cover rounded mb-2"
                   />
                   <p className="font-bold text-lg">
@@ -78,5 +75,5 @@ export default function HomeSearch() {
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -157,6 +157,7 @@ export default function AddListingPage() {
       router.push('/dashboard')
     }
   }
+
   const handleChatSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!chatInput.trim()) return
@@ -177,7 +178,7 @@ export default function AddListingPage() {
     } else {
       setMessages([...newMessages, { role: 'assistant', content: 'Sorry, I couldn’t generate a response.' }])
     }
-  }  // <-- ✅ THIS was missing!
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50 px-4 py-10">
@@ -187,7 +188,7 @@ export default function AddListingPage() {
         </div>
 
         <Link href="/" className="block text-3xl font-extrabold text-center mb-10 text-blue-600 tracking-tight">
-         <span className="bg-gradient-to-r from-blue-600 to-teal-400 bg-clip-text text-transparent">Start</span>MB
+          <span className="bg-gradient-to-r from-blue-600 to-teal-400 bg-clip-text text-transparent">Start</span>MB
         </Link>
 
         <div className="bg-white p-6 rounded-xl shadow space-y-6">
@@ -240,8 +241,7 @@ export default function AddListingPage() {
             {/* Document upload placeholder */}
             <div className="border border-yellow-300 bg-yellow-50 rounded-md p-4 mt-6">
               <h3 className="text-lg font-semibold text-yellow-800 mb-2">📁 Upload Disclosures & Reports <span className="text-sm text-yellow-600">(Coming Soon)</span></h3>
-              <p className="text-sm text-yellow-700 mb-4">Soon you&apos;ll be able to upload important real estate documents such as:</p>
-
+              <p className="text-sm text-yellow-700 mb-4">Soon you'll be able to upload important real estate documents such as:</p>
               <ul className="list-disc list-inside text-sm text-yellow-700 space-y-1">
                 <li>Property Disclosures</li>
                 <li>Natural Hazard Reports</li>

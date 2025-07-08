@@ -99,7 +99,7 @@ export default function DashboardPage() {
                         className="aspect-square bg-gray-100 rounded flex items-center justify-center overflow-hidden border"
                       >
                         {images[i] ? (
-                          <image src={images[i]} alt={`Property ${i + 1}`} className="w-full h-full object-cover" />
+                          <img src={images[i]} alt={`Property ${i + 1}`} className="w-full h-full object-cover" />
                         ) : (
                           <span className="text-xs text-gray-500">Coming soon</span>
                         )}
