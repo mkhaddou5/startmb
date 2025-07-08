@@ -2,16 +2,22 @@
 
 import { useState } from 'react'
 
+// Define the message type once for reuse
+type Message = {
+  role: 'user' | 'assistant';
+  content: string;
+};
+
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
 
   const sendMessage = async () => {
     if (!input.trim()) return
 
-    const userMessage = { role: 'user', content: input }
+    const userMessage: Message = { role: 'user', content: input }
     setMessages([...messages, userMessage])
     setInput('')
     setLoading(true)
@@ -22,14 +28,21 @@ export default function ChatBot() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: [...messages, userMessage] }),
       })
+
       const data = await res.json()
-      setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }])
+      const botReply: Message = { role: 'assistant', content: data.reply }
+
+      setMessages((prev) => [...prev, botReply])
     } catch (err) {
-      setMessages((prev) => [...prev, { role: 'assistant', content: '❌ Error getting response.' }])
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: '❌ Error getting response.' },
+      ])
     }
 
     setLoading(false)
   }
+
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
